@@ -59,7 +59,7 @@ if __name__ == '__main__':
     processes = []
 
     start_time = time.time()
-
+    num_processes = 1
     # 각 프로세스에 대해 시작 행과 끝 행을 다르게 설정하여, 각 프로세스가 독립적으로 백트래킹을 하도록 한다.
     rows_per_process = n // num_processes  # 각 프로세스가 맡을 행의 개수
     for i in range(num_processes):
