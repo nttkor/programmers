@@ -17,7 +17,6 @@ import time
 
 def is_safe(board, row, col, n):
     """현재 행과 열에서 퀸을 놓을 수 있는지 확인하는 함수"""
-    # 같은 열에 퀸이 있는지 확인
     for i in range(row):
         if board[i] == col or \
            board[i] - i == col - row or \
@@ -25,48 +24,48 @@ def is_safe(board, row, col, n):
             return False
     return True
 
-def solve_n_queens(board, row, n, solutions):
+def solve_n_queens(board, row, n, visited, solutions):
     """백트래킹을 이용한 n-queens 문제 해결 함수"""
     if row == n:
-        # 모든 퀸을 놓았다면, 해결책을 결과에 추가
-        solutions.append(board[:])
+        solutions.append(board[:])  # 모든 퀸을 놓았다면, 해결책을 결과에 추가
         return
 
     for col in range(n):
         if is_safe(board, row, col, n):
-            board[row] = col
-            solve_n_queens(board, row + 1, n, solutions)
+            board[row] = col  # 퀸 배치
+            solve_n_queens(board, row + 1, n, visited, solutions)  # 다음 행으로 진행
             board[row] = -1  # 백트래킹
 
-def solve_n_queens_chunk(start_row, n, results):
-    """주어진 시작 행부터 n-queen 문제를 풀고 결과를 results 리스트에 추가합니다."""
+def solve_n_queens_chunk(start_row, end_row, n, visited, results):
+    """주어진 범위 내에서 n-queen 문제를 풀고 결과를 results에 추가"""
     solutions = []
-    # 보드를 초기화 (행마다 -1로 설정)
-    board = [-1] * n
+    board = [-1] * n  # 보드 초기화
 
-    # start_row부터 끝까지 퀸을 배치
-    for row in range(start_row, n):
-        solve_n_queens(board, row, n, solutions)
-
+    # 주어진 범위(start_row ~ end_row)에서 백트래킹을 수행
+    for row in range(start_row, end_row):
+        solve_n_queens(board, row, n, visited, solutions)
+    
+    # 계산된 해를 결과에 추가
     results.append(solutions)
 
 if __name__ == '__main__':
-    n = 12  # 체스판 크기
-    num_processes = multiprocessing.cpu_count()  # 프로세스 개수
-    print(f"사용할 프로세스 개수: {num_processes}, 체스판 크기: {n}")
+    n = 12  # 체스판 크기 (12로 변경)
+    num_processes = 12  # 프로세스 개수 (예: 6개의 프로세서)
+    print(f"사용할 프로세스 개수: {num_processes}")
     
-    # 각 프로세스가 처리할 행 범위 설정
-    chunk_size = n // num_processes  # 각 프로세스에 할당될 행 수
     manager = multiprocessing.Manager()
     results = manager.list()  # 공유 리스트 생성
+    visited = manager.list([False] * n)  # 방문 여부를 체크하는 배열
     processes = []
 
     start_time = time.time()
 
-    # 프로세스 생성
+    # 각 프로세스에 대해 시작 행과 끝 행을 다르게 설정하여, 각 프로세스가 독립적으로 백트래킹을 하도록 한다.
+    rows_per_process = n // num_processes  # 각 프로세스가 맡을 행의 개수
     for i in range(num_processes):
-        start_row = i * chunk_size
-        process = multiprocessing.Process(target=solve_n_queens_chunk, args=(start_row, n, results))
+        start_row = i * rows_per_process
+        end_row = (i + 1) * rows_per_process if i != num_processes - 1 else n  # 마지막 프로세스는 남은 행을 다 처리
+        process = multiprocessing.Process(target=solve_n_queens_chunk, args=(start_row, end_row, n, visited, results))
         processes.append(process)
         process.start()
 
@@ -83,7 +82,6 @@ if __name__ == '__main__':
 
     print(f"해결 시간: {end_time - start_time:.2f}초")
     print(f"총 경우의 수: {total_solutions}")
-
 
 
 
