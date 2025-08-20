@@ -51,9 +51,9 @@ def solve_n_queens_chunk(start_row, n, results):
     results.append(solutions)
 
 if __name__ == '__main__':
-    n = 8  # 체스판 크기
+    n = 12  # 체스판 크기
     num_processes = multiprocessing.cpu_count()  # 프로세스 개수
-    print(f"사용할 프로세스 개수: {num_processes}")
+    print(f"사용할 프로세스 개수: {num_processes}, 체스판 크기: {n}")
     
     # 각 프로세스가 처리할 행 범위 설정
     chunk_size = n // num_processes  # 각 프로세스에 할당될 행 수
