@@ -50,38 +50,40 @@ def solve_n_queens_chunk(start_row, end_row, n, visited, results):
 
 if __name__ == '__main__':
     n = 12  # 체스판 크기 (12로 변경)
-    num_processes = 12  # 프로세스 개수 (예: 6개의 프로세서)
-    print(f"사용할 프로세스 개수: {num_processes}")
-    
-    manager = multiprocessing.Manager()
-    results = manager.list()  # 공유 리스트 생성
-    visited = manager.list([False] * n)  # 방문 여부를 체크하는 배열
-    processes = []
+    cpu_count = multiprocessing.cpu_count()
+    print(f"시스템의 CPU 코어 수: {cpu_count}")
+    for ci in range(cpu_count)   :
+        print(f"\n코어 {ci + 1} 사용")
+        num_processes = ci + 1  # 프로세스 개수 (예: 6개의 프로세서)
+        manager = multiprocessing.Manager()
+        results = manager.list()  # 공유 리스트 생성
+        visited = manager.list([False] * n)  # 방문 여부를 체크하는 배열
+        processes = []
 
-    start_time = time.time()
-    num_processes = 1
-    # 각 프로세스에 대해 시작 행과 끝 행을 다르게 설정하여, 각 프로세스가 독립적으로 백트래킹을 하도록 한다.
-    rows_per_process = n // num_processes  # 각 프로세스가 맡을 행의 개수
-    for i in range(num_processes):
-        start_row = i * rows_per_process
-        end_row = (i + 1) * rows_per_process if i != num_processes - 1 else n  # 마지막 프로세스는 남은 행을 다 처리
-        process = multiprocessing.Process(target=solve_n_queens_chunk, args=(start_row, end_row, n, visited, results))
-        processes.append(process)
-        process.start()
+        start_time = time.time()
+        print(f"사용할 프로세스 개수: {num_processes}")
+        # 각 프로세스에 대해 시작 행과 끝 행을 다르게 설정하여, 각 프로세스가 독립적으로 백트래킹을 하도록 한다.
+        rows_per_process = n // num_processes  # 각 프로세스가 맡을 행의 개수
+        for i in range(num_processes):
+            start_row = i * rows_per_process
+            end_row = (i + 1) * rows_per_process if i != num_processes - 1 else n  # 마지막 프로세스는 남은 행을 다 처리
+            process = multiprocessing.Process(target=solve_n_queens_chunk, args=(start_row, end_row, n, visited, results))
+            processes.append(process)
+            process.start()
 
-    # 모든 프로세스가 끝날 때까지 대기
-    for process in processes:
-        process.join()
+        # 모든 프로세스가 끝날 때까지 대기
+        for process in processes:
+            process.join()
 
-    # 결과 집계
-    total_solutions = 0
-    for result in results:
-        total_solutions += len(result)
+        # 결과 집계
+        total_solutions = 0
+        for result in results:
+            total_solutions += len(result)
 
-    end_time = time.time()
+        end_time = time.time()
 
-    print(f"해결 시간: {end_time - start_time:.2f}초")
-    print(f"총 경우의 수: {total_solutions}")
+        print(f"해결 시간: {end_time - start_time:.2f}초")
+        print(f"총 경우의 수: {total_solutions}")
 
 
 
