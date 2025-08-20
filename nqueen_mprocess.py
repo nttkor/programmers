@@ -12,6 +12,7 @@ def solve_n_queens_chunk(start_row, n, results):
 if __name__ == '__main__':
     n = 8  # 체스판 크기
     num_processes = multiprocessing.cpu_count()  # 프로세스 개수
+    print(f"사용할 프로세스 개수: {num_processes}")
     chunk_size = n // num_processes  # 각 프로세스에 할당될 행 수
     manager = multiprocessing.Manager()
     results = manager.list() # 공유 리스트 생성
