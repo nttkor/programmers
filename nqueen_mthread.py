@@ -25,7 +25,6 @@ def solve_n_queens_partial(board_size, start_row, end_row, result):
             return 1  # 유효한 배치 발견
 
         for col in range(board_size):
-            print(f"Checking position ({row}, {col})")
             if is_safe(board, row, col):
                 board[row] = col
                 count += backtrack(row + 1, board)
@@ -70,7 +69,7 @@ def solve_n_queens_multithreaded(board_size, num_threads):
 
 if __name__ == "__main__":
     N = 12  # 예시 체스판 크기
-    num_threads = 4  # 사용할 스레드 개수
+    num_threads = 12  # 사용할 스레드 개수
     start_time = time.time()
     print(f"{N}-Queen 문제를 {num_threads}개의 스레드를 사용하여 해결 중...")
     total_solutions = solve_n_queens_multithreaded(N, num_threads)
