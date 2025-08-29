@@ -13,7 +13,7 @@ def solution(places):
     print(being)
         
     return answer
-def main():
-    for line in places:
-        print(line)
-    # solution(places)
+
+for line in places:
+    print(line)
+# solution(places)
