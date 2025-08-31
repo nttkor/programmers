@@ -8,7 +8,7 @@ def solution(s):
                 b += v
             else:
                 cnt += 1
-        return bin(len(b)), cnt
+        return format(len(b),'b'), cnt
 
     i=0
     st = s
