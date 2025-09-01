@@ -1,0 +1,14 @@
+# Python 캐시 디렉터리 무시
+**/__pycache__/
+
+# 가상환경 디렉터리 무시
+**/venv/
+**/.venv/
+# (선택) 일반적인 Python 관련 무시 항목들 추가
+*.pyc
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
